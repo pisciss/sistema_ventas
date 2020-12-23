@@ -41,7 +41,7 @@ Route::get('/productos/{id}', 'ProductoController@update')->name('productos.upda
 //Route::get('dataTablePaciente', 'PacienteController@dataTable')->name('dataTablePaciente');
 Route::resource('categorias', 'CategoriaController');
 Route::resource('users', 'UserController');
-Route::resource('roles', 'RoleController');
+Route::resource('roles', 'RoleController')->middleware('can:isAdmin');
 Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();

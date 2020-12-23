@@ -23,8 +23,24 @@
     <tr>
 <td>{{$user->name}}</td>
 <td>{{$user->email}}</td>
-<td>roles</td>
-<td>permisos</td>
+<td>
+    @if($user->roles->isNotEmpty())
+@foreach($user->roles as $role)
+    <span class="badge badge-secondary">
+{{$role->name}}
+
+    </span>
+@endforeach
+@endif
+</td>
+<td>  @if($user->permissions->isNotEmpty())
+    @foreach($user->permissions as $permission)
+        <span class="badge badge-secondary">
+    {{$permission->name}}
+    
+        </span>
+    @endforeach
+    @endif</td>
 <td>
     <a href="{{action('UserController@edit',$user->id)}}"> <button class="btn btn-info">Editar</button></a>
     <a href="" data-target="#modal-delete-{{$user->id}}" data-toggle="modal"> <button class="btn btn-danger">Eliminar</button></a>

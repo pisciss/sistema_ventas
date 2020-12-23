@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{{asset('css/_all-skins.min.css')}}">
     <link rel="apple-touch-icon" href="{{asset('img/apple-touch-icon.png')}}">
     <link rel="shortcut icon" href="{{asset('img/favicon.ico')}}">
+    @yield('css_role_page')
 
   </head>
   <body class="hold-transition skin-blue sidebar-mini">
@@ -47,8 +48,11 @@
               <!-- User Account: style can be found in dropdown.less -->
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <small class="bg-red">Online</small>
-                  <span class="hidden-xs">Juan Carlos Arcila Díaz</span>
+                  <small class="bg-green">Online</small>
+                  @auth
+          {{ Auth::user()->name }}
+           {{-- {{ Auth::user()->roles->isNotEmpty() ? Auth::user()->roles->first()->name : "" }} --}}
+          @endauth
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->
@@ -96,28 +100,7 @@
                 <li><a href="/categorias"><i class="fa fa-circle-o"></i> Categorías</a></li>
               </ul>
             </li>
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-users"></i>
-                <span>Proveedores</span>
-                 <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="/proveedores"><i class="fa fa-circle-o"></i> Proveedores</a></li>
-              
-              </ul>
-            </li>
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-users"></i>
-                <span>Clientes</span>
-                 <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="/clientes"><i class="fa fa-circle-o"></i> Clientes</a></li>
-              
-              </ul>
-            </li>
+               
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-th"></i>
@@ -125,8 +108,8 @@
                  <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li><a href="compras/ingreso"><i class="fa fa-circle-o"></i> Ingresos</a></li>
-                <li><a href="compras/proveedor"><i class="fa fa-circle-o"></i> Proveedores</a></li>
+                <li><a href="/ingresos"><i class="fa fa-circle-o"></i> Ingresos</a></li>
+                <li><a href="/proveedores"><i class="fa fa-circle-o"></i> Proveedores</a></li>
               </ul>
             </li>
             <li class="treeview">
@@ -136,21 +119,23 @@
                  <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li><a href="ventas/venta"><i class="fa fa-circle-o"></i> Ventas</a></li>
-                <li><a href="ventas/cliente"><i class="fa fa-circle-o"></i> Clientes</a></li>
+                <li><a href="/ventas"><i class="fa fa-circle-o"></i> Ventas</a></li>
+                <li><a href="/clientes"><i class="fa fa-circle-o"></i> Clientes</a></li>
               </ul>
             </li>
-                       
+                  @can('isAdmin')    
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-folder"></i> <span>Acceso</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li><a href="configuracion/usuario"><i class="fa fa-circle-o"></i> Usuarios</a></li>
+                <li><a href="/users"><i class="fa fa-circle-o"></i> Usuarios</a></li>
+                <li><a href="/roles"><i class="fa fa-circle-o"></i> Roles</a></li>
                 
               </ul>
             </li>
+            @endcan
              <li>
               <a href="#">
                 <i class="fa fa-plus-square"></i> <span>Ayuda</span>
@@ -228,6 +213,7 @@
     <script src="{{asset('js/bootstrap-select.min.js')}}"></script>
     <!-- AdminLTE App -->
     <script src="{{asset('js/app.min.js')}}"></script>
+
     
   </body>
 </html>

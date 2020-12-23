@@ -30,7 +30,9 @@
        
         <div  class="form-group">
           <label for="roles_permissions">Add Permisos</label>
-          <input type="text" class="form-control" name="roles_permissions" data-role="tagsinput" id="roles_permissions">
+          <input type="text" data-role="tagsinput" name="roles_permissions" class="form-control" id="roles_permissions" value="@foreach ($role->permissions as $permission)
+          {{$permission->name. ","}}
+      @endforeach">   
         </div>
        
    <div class="form-group">
@@ -41,6 +43,25 @@
   
 </div>
 </div>
+@section('css_role_page')
+<link rel="stylesheet" href="/css/bootstrap-tagsinput.css">
+@endsection
 
+@push('scripts')
+<script src="/js/bootstrap-tagsinput.js"></script>
+<script>
+$(document).ready(function(){
+$('#name').keyup(function(e){
+var str = $('#name').val();
+str = str.replace(/\W+(?!$)/g, '-').toLowerCase();
+$('#slug').val(str);
+$('#slug').attr('placeholder',str);
+
+});
+
+});
+
+</script>
+@endpush
 
 @endsection

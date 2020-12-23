@@ -25,7 +25,14 @@
 <td>{{$role->id}}</td>
 <td>{{$role->name}}</td>
 <td>{{$role->slug}}</td>
-<td></td>
+<td>@if ($role->permissions != null)
+@foreach($role->permissions as $permission)
+    <span class="badge badge-secondary">
+        {{$permission->name}}
+    </span>
+@endforeach
+@endif
+</td>
 <td>
     <a href="{{action('RoleController@edit',$role->id)}}"> <button class="btn btn-info">Editar</button></a>
     <a href="" data-target="#modal-delete-{{$role->id}}" data-toggle="modal"> <button class="btn btn-danger">Eliminar</button></a>

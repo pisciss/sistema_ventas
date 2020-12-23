@@ -39,6 +39,25 @@
   
 </div>
 </div>
+@section('css_role_page')
+<link rel="stylesheet" href="/css/bootstrap-tagsinput.css">
+@endsection
 
+@push('scripts')
+<script src="/js/bootstrap-tagsinput.js"></script>
+<script>
+$(document).ready(function(){
+$('#name').keyup(function(e){
+var str = $('#name').val();
+str = str.replace(/\W+(?!$)/g, '-').toLowerCase();
+$('#slug').val(str);
+$('#slug').attr('placeholder',str);
+
+});
+
+});
+
+</script>
+@endpush
 
 @endsection

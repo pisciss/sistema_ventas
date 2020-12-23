@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Permission;
 use App\User;
+use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,13 +21,18 @@ class UserController extends Controller
         //
         return view('users.index', ["users" => $users, "busca" => $query]);
     }
-    public function create()
+    public function create(Request $request)
     {
-        return view('users.create');
+        if ($request->ajax()) {
+            $roles = Role::where('id', $request->role_id)->first();
+            $permissions = $roles->permissions;
+            return $permissions;
+        }
+        $roles = Role::all();
+        return view('users.create', ['roles' => $roles]);
     }
 
     public function store(Request $request)
-
 
     {
         $request->validate([
@@ -45,6 +52,18 @@ class UserController extends Controller
 
         $user->save();
 
+        if ($request->role != null) {
+
+            $user->roles()->attach($request->role);
+            $user->save();
+        }
+
+        if ($request->permissions != null) {
+            foreach ($request->permissions as $permission) {
+                $user->permissions()->attach($permission);
+                $user->save();
+            }
+        }
         return redirect()->action('UserController@index');
     }
 
@@ -56,7 +75,21 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('users.edit', compact('user'));
+        $roles = Role::get();
+        $userRole = $user->roles->first();
+        if ($userRole != null) {
+            $rolePermissions = $userRole->allRolePermissions;
+        } else {
+            $rolePermissions = null;
+        }
+        $userPermissions = $user->permissions;
+        return view('users.edit', [
+            'user' => $user,
+            'roles' => $roles,
+            'userRole' => $userRole,
+            'rolePermissions' => $rolePermissions,
+            'userPermissions' => $userPermissions
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -65,8 +98,8 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|max:50',
             'email' => 'exists:users|email',
-            'password' => 'required|max:20',
-            'password_confirm' => 'required|max:20',
+            'password' => 'confirmed',
+
         ]);
 
 
@@ -80,6 +113,20 @@ class UserController extends Controller
         }
         $user->save();
 
+        $user->roles()->detach();
+        $user->permissions()->detach();
+
+        if ($request->role != null) {
+            $user->roles()->attach($request->role);
+            $user->save();
+        }
+        if ($request->permissions != null) {
+            foreach ($request->permissions as $permission) {
+                $user->permissions()->attach($permission);
+                $user->save();
+            }
+        }
+
         return redirect()->action('UserController@index');
     }
 
@@ -87,6 +134,8 @@ class UserController extends Controller
 
     {
         $user = User::findOrFail($id);
+        $user->roles()->detach();
+        $user->permissions()->detach();
         $user->delete();
         return redirect()->route('users.index');
     }

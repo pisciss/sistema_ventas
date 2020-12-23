@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Role;
 use Illuminate\Http\Request;
+use  App\Permission;
+use Illuminate\Support\Facades\Gate;
 
 class RoleController extends Controller
 {
@@ -18,6 +20,9 @@ class RoleController extends Controller
     }
     public function create()
     {
+        if (Gate::allows('isAdmin')) {
+            abort(403);
+        }
         return view('roles.create');
     }
 
@@ -36,6 +41,17 @@ class RoleController extends Controller
         $role->slug = $request->slug;
 
         $role->save();
+
+        $listOfPermissions = explode(',', $request->roles_permissions);
+
+        foreach ($listOfPermissions as $per) {
+            $permissions = new Permission();
+            $permissions->name = $per;
+            $permissions->slug = strtolower(str_replace(" ", "-", $per));
+            $permissions->save();
+            $role->permissions()->attach($permissions->id);
+            $role->save();
+        }
         return redirect()->action('RoleController@index');
     }
 
@@ -44,10 +60,10 @@ class RoleController extends Controller
         return view('categorias.show', compact('categoria'));
     }
 
-    public function edit($id)
+    public function edit(Role $role)
     {
-        $role = Role::findOrFail($id);
-        return view('roles.edit', compact('role'));
+        //  $role = Role::findOrFail($id);
+        return view('roles.edit', ['role' => $role]);
     }
 
 
@@ -58,6 +74,23 @@ class RoleController extends Controller
         $role->name = $request->get('name');
         $role->slug = $request->get('slug');
         $role->save();
+        //borro y las relaciones también
+        $role->permissions()->delete();
+        $role->permissions()->detach();
+
+
+
+
+        $listOfPermissions = explode(',', $request->roles_permissions);
+
+        foreach ($listOfPermissions as $per) {
+            $permissions = new Permission();
+            $permissions->name = $per;
+            $permissions->slug = strtolower(str_replace(" ", "-", $per));
+            $permissions->save();
+            $role->permissions()->attach($permissions->id);
+            $role->save();
+        }
         return redirect()->action('RoleController@index');
     }
 
@@ -65,7 +98,10 @@ class RoleController extends Controller
 
     {
         $role = Role::findOrFail($id);
+        $role->permissions()->delete();
         $role->delete();
+
+        $role->permissions()->detach();
         return redirect()->route('roles.index');
     }
 }
