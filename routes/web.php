@@ -24,7 +24,7 @@ Auth::routes();
 
 
 Route::get('/home', 'HomeController@index')->name('home');
-
+Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::get('/proveedores/{id}/edit', 'ProveedorController@edit')->name('proveedores.edit');
 
 Route::get('/productos/{id}/edit', 'ProductoController@edit')->name('productos.edit');
@@ -40,7 +40,7 @@ Route::get('/productos/{id}', 'ProductoController@update')->name('productos.upda
 //Route::resource('pacientes', 'PacienteController');
 //Route::get('dataTablePaciente', 'PacienteController@dataTable')->name('dataTablePaciente');
 Route::resource('categorias', 'CategoriaController');
-Route::resource('users', 'UserController');
+Route::resource('users', 'UserController')->middleware('role:admin,vendedor');
 Route::resource('roles', 'RoleController')->middleware('can:isAdmin');
 Route::get('/home', 'HomeController@index')->name('home');
 

@@ -15,8 +15,9 @@
 </div>
 @endif
 
-{!!Form::model($categoria,['method'=>'PATCH','route'=>['categorias.update',$categoria->id]])!!}
-{{Form::token()}}
+<form action="{{ route('categorias.update',$categoria->id)}}"  method="post">
+  @method('PATCH')
+  @csrf
  
           <div  class="form-group">
           <label for="nombre">Nombre</label>
@@ -33,7 +34,7 @@
         <button type="submit" class="btn btn-primary">Guardar</button>
         <button type="reset" onclick="window.history.back();"  class="btn btn-danger">Cancelar</button>
     </div>
- {!!Form::close()!!}
+  </form>
   
 </div>
 </div>

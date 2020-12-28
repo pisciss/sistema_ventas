@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Redirect;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\ProductoForm;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 
 class ProductoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(Request $request)
     {
 
@@ -82,6 +87,7 @@ class ProductoController extends Controller
     public function update(Request $request, $id)
     {
 
+        $this->authorize('update', $id);
         $request->validate([
             'codigo' => 'required|max:40',
             'nombre' => 'required|max:50',

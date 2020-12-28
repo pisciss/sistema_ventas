@@ -7,11 +7,14 @@ use App\Categoria;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\CategoriaForm;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Gate;
 
 class CategoriaController extends Controller
 {
-    //
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(Request $request)
     {
 
@@ -46,10 +49,17 @@ class CategoriaController extends Controller
         return view('categorias.edit', compact('categoria'));
     }
 
-    public function update(CategoriaForm $request, Categoria $categoria)
+    public function update(Request $request, $id)
     {
+        //  $this->authorize('update', $id);
 
-        $categoria = Categoria::findOrFail($categoria);
+        $request->validate([
+            'nombre' => 'required|max:50',
+            'descripcion' => 'required|max:200'
+
+        ]);
+
+        $categoria = Categoria::findOrFail($id);
         $categoria->nombre = $request->get('nombre');
         $categoria->descripcion = $request->get('descripcion');
         $categoria->save();
