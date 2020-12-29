@@ -4,7 +4,8 @@
 <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
 <h3>Listado de Productos
 
-<a href="productos/create"><button class="btn btn-success">Nuevo</button></a> </h3>
+<a href="productos/create"><button class="btn btn-success">Nuevo</button></a>
+<button type="button" id="bt_pdf" class="btn btn-info">Pdf</button>  </h3>
 
  
 
@@ -54,5 +55,18 @@
 
 
 </div>
+@push('scripts')
+<script>
+    $(document).ready(function(){
+    $('#bt_pdf').click(function(){
+  
+window.open('http://localhost:8000/productos/listarPdf','_blank');
+//alert("Error al ingresar detalle");
 
+    
+    });
+    
+    });
+    </script>
+@endpush
 @endsection

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 
 use App\Producto;
 use App\Categoria;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Intervention\Image\Facades\Image;
+
 use App\Http\Requests\ProductoForm;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -15,10 +17,10 @@ use Illuminate\Support\Facades\Gate;
 
 class ProductoController extends Controller
 {
-    public function __construct()
+    /* public function __construct()
     {
         $this->middleware('auth');
-    }
+    }*/
     public function index(Request $request)
     {
 
@@ -87,7 +89,7 @@ class ProductoController extends Controller
     public function update(Request $request, $id)
     {
 
-        $this->authorize('update', $id);
+
         $request->validate([
             'codigo' => 'required|max:40',
             'nombre' => 'required|max:50',
@@ -101,6 +103,7 @@ class ProductoController extends Controller
 
 
         $producto = Producto::findOrFail($id);
+        $this->authorize('update', $producto);
         $producto->nombre = $request->get('nombre');
         $producto->descripcion = $request->get('descripcion');
         $producto->id_categoria = $request->get('id_categoria');
@@ -125,5 +128,19 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         $producto->delete();
         return redirect()->route('productos.index');
+    }
+    public function listarPdf()
+    {
+        // $query = trim($request->get('busca'));
+        $productos =  Producto::join('categorias as c', 'c.id', '=', 'productos.id_categoria')
+            ->select('productos.id', 'productos.nombre', 'productos.descripcion', 'productos.codigo', 'c.nombre as categoria', 'productos.imagen', 'productos.estado', 'productos.precio_compra', 'productos.precio_venta', 'productos.stock')
+            ->orderBy('productos.nombre')->get();
+        //    ->where('productos.nombre', 'LIKE', '%' . $query . '%');
+        //  ->orwhere('productos.codigo', 'LIKE', '%' . $query . '%')->paginate(7);
+        //
+        $cont = Producto::count();
+        $pdf = PDF::loadView('pdf.productospdf', ['productos' => $productos, 'cont' => $cont]);
+
+        return $pdf->download('productos.pdf');
     }
 }

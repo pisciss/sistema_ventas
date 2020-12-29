@@ -51,3 +51,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/productos/listarPdf', 'ProductoController@listarPdf')->name('productos_pdf');

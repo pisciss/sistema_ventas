@@ -51,7 +51,7 @@ class CategoriaController extends Controller
 
     public function update(Request $request, $id)
     {
-        //  $this->authorize('update', $id);
+
 
         $request->validate([
             'nombre' => 'required|max:50',
@@ -60,6 +60,7 @@ class CategoriaController extends Controller
         ]);
 
         $categoria = Categoria::findOrFail($id);
+        $this->authorize('update', $categoria);
         $categoria->nombre = $request->get('nombre');
         $categoria->descripcion = $request->get('descripcion');
         $categoria->save();
